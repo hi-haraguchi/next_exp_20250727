@@ -4,16 +4,16 @@ import { Button } from '@mui/material'
 // import styles from ".style.module.scss"
 
 
-const Post = ({name,date,content,link }) => {
+const Post = ({ content, createdAt, author }) => {
   return (
     <div className={styles.post}>
-
-    <p>{name}</p>
-    <p>{date}</p>
-    <p>{content}</p>
+      {/*  */}
+      <p>{new Date(createdAt).toLocaleString()}</p>
+      <p>{content}</p>
+      <p>{author.username}</p>
 
     {/* scssはサスと呼ぶ、使い方の練習 */}
-    <p className={styles.link}>{link}</p>
+    {/* <p className={styles.link}>{link}</p> */}
 
     </div>
   )

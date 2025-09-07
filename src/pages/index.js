@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from "react";
 import Head from "next/head";
 // import styles from "@/styles/Home.module.css";
 import styles from "@/styles/style.module.scss";
@@ -5,8 +6,43 @@ import Header from "@/components/Header";
 import Timeline from "@/components/Timeline";
 import Post from "@/components/Post";
 import { mockData } from "@/mock/data";
+import { useRouter } from "next/navigation";
+import apiClient from "@/lib/apiClient";
 
 export default function Home() {
+  // バックエンドから取得したデータを保持するもの
+  const [posts, setPosts] = useState([]);
+
+  const router = useRouter();
+
+  // ログインチェックのためのuseEffectを記述
+  // ログインチェックのためのuseEffectを記述します🤗
+  useEffect(() => {
+    // このまま記述してしまうと、今現在強制的にloginに飛ばすことになるので後でコメントアウトします🤗ログインチェックの部分に該当するところなので勉強のために記述しています🤗
+    const token = localStorage.getItem("token");
+    if (!token) {
+      router.push("/login");
+      return;
+    }
+
+    // 取得の処理をこの下に書きます🤗
+
+    const fetchPosts = async () => {
+      try {
+        const response = await apiClient.get("/api/posts");
+        console.log(response, "response 取得チェック");
+        // 今はバックエンドないので見れない
+        setPosts(response.data);
+      } catch (error) {
+        console.log("投稿の取得に失敗しました:", error);
+      }
+      // この下は消さない🤗
+    };
+
+    // 実行してあげる
+    fetchPosts();
+  }, []);
+
   return (
     <>
       <Head>
@@ -19,17 +55,17 @@ export default function Home() {
       <main className={styles.container}>
         <Header />
 
-        <Timeline />
+        <Timeline setPosts={setPosts} />
 
         <div>
-          {mockData &&
-            mockData.map((item, index) => (
+          {/* できたらmocDataをpostにする */}
+          {posts &&
+            posts.map((item, index) => (
               <Post
                 key={index}
-                name={item.name}
-                date={item.date}
                 content={item.content}
-                link={item.link}
+                createdAt={item.createdAt}
+                author={item.author}
               />
             ))}
         </div>
